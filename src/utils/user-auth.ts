@@ -348,7 +348,8 @@ export class UserAuthManager {
       state: state,
     });
 
-    return `https://www.facebook.com/v23.0/dialog/oauth?${params.toString()}`;
+    const apiVersion = process.env.META_API_VERSION || 'v24.0';
+    return `https://www.facebook.com/${apiVersion}/dialog/oauth?${params.toString()}`;
   }
 
   /**
@@ -366,8 +367,9 @@ export class UserAuthManager {
       code: code,
     });
 
+    const apiVersion = process.env.META_API_VERSION || 'v24.0';
     const response = await fetch(
-      `https://graph.facebook.com/v23.0/oauth/access_token`,
+      `https://graph.facebook.com/${apiVersion}/oauth/access_token`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -398,8 +400,9 @@ export class UserAuthManager {
     name: string;
     email: string;
   }> {
+    const apiVersion = process.env.META_API_VERSION || 'v24.0';
     const response = await fetch(
-      `https://graph.facebook.com/v23.0/me?fields=id,name,email&access_token=${accessToken}`
+      `https://graph.facebook.com/${apiVersion}/me?fields=id,name,email&access_token=${accessToken}`
     );
 
     if (!response.ok) {

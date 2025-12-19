@@ -218,6 +218,29 @@ npx -y meta-ads-mcp
 node build/index.js
 ```
 
+#### 6. Ad Set Creation "Invalid Parameter" Errors
+
+If you're getting "Invalid Parameter" errors when creating ad sets, use our diagnostic tools:
+
+```bash
+# Quick diagnosis (1 minute)
+export META_ACCESS_TOKEN="your_token_here"
+npx tsx diagnose-account.ts
+
+# Full test with detailed error messages
+npx tsx test-adset-creation.ts
+```
+
+**Common Causes:**
+- ❌ **No payment method configured** (>50% of cases) - Add one at [Meta Business Manager](https://business.facebook.com/settings/payment-methods)
+- ❌ **Missing `promoted_object`** - Required for OUTCOME_TRAFFIC, OUTCOME_LEADS, etc.
+- ❌ **Budget too low** - Use at least 1000 cents ($10) for testing
+- ❌ **Invalid optimization_goal + billing_event combination**
+
+📖 **See detailed guides:**
+- [GUIDA_DEBUG_ADSET.md](GUIDA_DEBUG_ADSET.md) - Practical troubleshooting guide (Italian)
+- [ANALISI_PROBLEMA_ADSET.md](ANALISI_PROBLEMA_ADSET.md) - Technical analysis (Italian)
+
 ### Debug Mode
 Enable debug logging by adding to your environment:
 ```json
