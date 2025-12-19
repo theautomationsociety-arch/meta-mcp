@@ -25,7 +25,7 @@ export class AuthManager {
   }
 
   getApiVersion(): string {
-    return this.config.apiVersion || "v23.0";
+    return this.config.apiVersion || "v24.0";
   }
 
   getBaseUrl(): string {

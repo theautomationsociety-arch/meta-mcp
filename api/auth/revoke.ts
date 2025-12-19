@@ -25,7 +25,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (tokens?.accessToken) {
       try {
         // Attempt to revoke the token with Meta
-        const revokeUrl = `https://graph.facebook.com/v23.0/me/permissions?access_token=${tokens.accessToken}`;
+        const apiVersion = process.env.META_API_VERSION || 'v24.0';
+        const revokeUrl = `https://graph.facebook.com/${apiVersion}/me/permissions?access_token=${tokens.accessToken}`;
         const revokeResponse = await fetch(revokeUrl, {
           method: 'DELETE'
         });

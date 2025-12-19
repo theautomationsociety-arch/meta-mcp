@@ -875,19 +875,14 @@ export class MetaApiClient {
       formData.append("access_token", this.auth.getAccessToken());
 
       console.log("Uploading to Meta API...");
-      console.log(
-        "Endpoint:",
-        `https://graph.facebook.com/v22.0/${formattedAccountId}/adimages`
-      );
+      const uploadEndpoint = `${this.auth.getBaseUrl()}/${this.auth.getApiVersion()}/${formattedAccountId}/adimages`;
+      console.log("Endpoint:", uploadEndpoint);
 
       // Upload to Meta API
-      const uploadResponse = await fetch(
-        `https://graph.facebook.com/v23.0/${formattedAccountId}/adimages`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const uploadResponse = await fetch(uploadEndpoint, {
+        method: "POST",
+        body: formData,
+      });
 
       const uploadResult = (await uploadResponse.json()) as any;
       console.log("Upload response:", JSON.stringify(uploadResult, null, 2));
