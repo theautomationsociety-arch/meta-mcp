@@ -125,21 +125,49 @@ async function testAdSetCreation() {
 
     if (requiresPromotedObject) {
       console.log(`⚠️  Campaign objective ${campaign.objective} richiede promoted_object`);
-      console.log('   Per completare questo test, avrai bisogno di:');
+      console.log('   Cercando Facebook Pages automaticamente...\n');
 
-      if (campaign.objective === 'OUTCOME_TRAFFIC') {
-        console.log('   - page_id: ID della tua Facebook Page');
-        console.log('   - pixel_id: ID del tuo Facebook Pixel (opzionale)');
-        console.log('\n   Esempio:');
-        console.log('   adSetData.promoted_object = { page_id: "123456789" };\n');
+      try {
+        // Ottieni le Facebook Pages dell'utente
+        const token = auth.getAccessToken();
+        const apiVersion = auth.getApiVersion();
+        const pagesResponse = await fetch(
+          `https://graph.facebook.com/${apiVersion}/me/accounts?fields=id,name&access_token=${token}`
+        );
+
+        if (!pagesResponse.ok) {
+          throw new Error('Impossibile recuperare le Facebook Pages');
+        }
+
+        const pagesData = await pagesResponse.json();
+
+        if (!pagesData.data || pagesData.data.length === 0) {
+          console.log('❌ Nessuna Facebook Page trovata\n');
+          console.log('PROSSIMI PASSI:');
+          console.log('1. Crea una Facebook Page su https://www.facebook.com/pages/create');
+          console.log('2. Oppure aggiungi manualmente il page_id allo script');
+          console.log('3. Riprova il test\n');
+          return;
+        }
+
+        const page = pagesData.data[0];
+        console.log(`✅ Trovata Facebook Page: ${page.name} (${page.id})`);
+        console.log(`   Uso questo Page ID per il test\n`);
+
+        // Aggiungi promoted_object ai dati dell'adset
+        (adSetData as any).promoted_object = {
+          page_id: page.id
+        };
+
+      } catch (error) {
+        console.log('❌ Errore nel recupero Facebook Pages\n');
+        console.log('SOLUZIONE MANUALE:');
+        console.log('1. Esegui: npx tsx get-page-id.ts');
+        console.log('2. Copia il page_id mostrato');
+        console.log('3. Modifica test-adset-creation.ts aggiungendo:');
+        console.log('   adSetData.promoted_object = { page_id: "TUO_PAGE_ID" };\n');
+        return;
       }
-
-      console.log('❌ Test interrotto: promoted_object mancante\n');
-      console.log('PROSSIMI PASSI:');
-      console.log('1. Ottieni il page_id della tua Facebook Page');
-      console.log('2. Aggiungi promoted_object ai parametri dell\'adset');
-      console.log('3. Riprova il test\n');
-      return;
     }
 
     console.log(JSON.stringify(adSetData, null, 2));
